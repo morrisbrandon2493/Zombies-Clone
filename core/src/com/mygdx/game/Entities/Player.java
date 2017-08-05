@@ -43,10 +43,11 @@ public class Player extends Entity implements Collidable{
 
 		if(pressed.size()>1)
 			velocity = velocity/2;
+
 		Integer[] pressArray = pressed.toArray(new Integer[pressed.size()]);
 
-		for(int i =0;i<pressArray.length;i++)
-		{
+		for(int i =0;i<pressArray.length;i++){
+
 			int keycode = pressArray[i];
 			switch(keycode) {
 			case Keys.A:
@@ -91,95 +92,83 @@ public class Player extends Entity implements Collidable{
 	{
 		float playerXCoord = (this.getHitbox().x/collisionLayer.getTileWidth());
 		float playerYCoord = (this.getHitbox().y/collisionLayer.getTileHeight());
-		
+
 		float playerTileWidth =  hitbox.getWidth()/collisionLayer.getTileWidth();
 		float playerTileHeight =  hitbox.getHeight()/collisionLayer.getTileHeight();
-		
+
 		float rectWidth = collisionLayer.getTileWidth();
 		float rectHeight = collisionLayer.getTileHeight();
-		
-		if(collidesRight(collisionLayer, playerXCoord, playerYCoord, rectWidth, rectHeight, playerTileWidth, playerTileHeight))
-		{
+
+		if(collidesRight(collisionLayer, playerXCoord, playerYCoord, rectWidth, rectHeight, playerTileWidth, playerTileHeight)){
 			blockedDirections.add(CardinalDirection.EAST);
 		}
-		else
-		{
+		else{
 			blockedDirections.remove(CardinalDirection.EAST);
 		}
 
-		if(collidesLeft(collisionLayer, playerXCoord, playerYCoord, rectWidth, rectHeight, playerTileWidth, playerTileHeight))
-		{
+		if(collidesLeft(collisionLayer, playerXCoord, playerYCoord, rectWidth, rectHeight, playerTileWidth, playerTileHeight)){
 			blockedDirections.add(CardinalDirection.WEST);
 		}
-		else
-		{
+		else{
 			blockedDirections.remove(CardinalDirection.WEST);
 		}
 
-		if(collidesTop(collisionLayer, playerXCoord, playerYCoord, rectWidth, rectHeight, playerTileWidth, playerTileHeight))
-		{
+		if(collidesTop(collisionLayer, playerXCoord, playerYCoord, rectWidth, rectHeight, playerTileWidth, playerTileHeight)){
 			blockedDirections.add(CardinalDirection.NORTH);
 		}
-		else
-		{
+		else{
 			blockedDirections.remove(CardinalDirection.NORTH);
 		}
 
-		if(collidesBottom(collisionLayer, playerXCoord, playerYCoord, rectWidth, rectHeight, playerTileWidth, playerTileHeight))
-		{
+		if(collidesBottom(collisionLayer, playerXCoord, playerYCoord, rectWidth, rectHeight, playerTileWidth, playerTileHeight)){
 			blockedDirections.add(CardinalDirection.SOUTH);
 		}
-		else
-		{
+		else{
 			blockedDirections.remove(CardinalDirection.SOUTH);
 		}
 	}
-	
-	
+
+
 	public boolean collidesBottom(TiledMapTileLayer collisionLayer,float playerXCoord, float playerYCoord, float rectWidth,float rectHeight,float playerTileWidth,float playerTileHeight) {
 
 		float southY = playerYCoord-1;
 
-		for(int i = (int)playerXCoord;i<= (int)(playerXCoord+playerTileWidth);i++)
-		{
+		for(int i = (int)playerXCoord;i<= (int)(playerXCoord+playerTileWidth);i++){
 
 			Cell southCell = collisionLayer.getCell((int)i, (int) southY);
 
+			if(southCell !=null && southCell.getTile()!=null){
 
-			if(southCell !=null && southCell.getTile()!=null)
-			{
 				float rectX = i*collisionLayer.getTileWidth();
 				float rectY = (int)southY*collisionLayer.getTileHeight();
-			
+
 				Rectangle cellRect = new Rectangle(rectX,rectY,rectWidth,rectHeight+this.speed);
 
-				if(this.overlaps(cellRect))
-				{
+				if(this.overlaps(cellRect)){
 					return true;
 				}
-				
+
 			}
 		}	
 		return false;
 	}
-	public boolean collidesRight(TiledMapTileLayer collisionLayer,float playerXCoord, float playerYCoord, float rectWidth,float rectHeight,float playerTileWidth,float playerTileHeight) 
-	{		
+	public boolean collidesRight(TiledMapTileLayer collisionLayer,float playerXCoord, float playerYCoord, float rectWidth,float rectHeight,float playerTileWidth,float playerTileHeight) {
+
 		float eastX = (playerXCoord+playerTileWidth+1);
-		
-		for(int i = (int)playerYCoord;i<= (int)(playerYCoord+playerTileHeight);i++)
-		{
+
+		for(int i = (int)playerYCoord;i<= (int)(playerYCoord+playerTileHeight);i++){
+
 			Cell eastCell = collisionLayer.getCell((int)eastX, (int)i);
 
-			if(eastCell !=null && eastCell.getTile()!=null)
-			{
+			if(eastCell !=null && eastCell.getTile()!=null){
+
 				float rectX = (int)eastX*collisionLayer.getTileWidth();
 				float rectY = i*collisionLayer.getTileHeight();
-				
+
 
 				Rectangle cellRect = new Rectangle(rectX-this.speed,rectY,rectWidth,rectHeight);
 
-				if(this.overlaps(cellRect))
-				{
+				if(this.overlaps(cellRect)){
 					return true;
 				}
 			}
@@ -191,20 +180,18 @@ public class Player extends Entity implements Collidable{
 
 		float westX = playerXCoord-1;
 
-		for(int i = (int)playerYCoord;i<= (int)(playerYCoord+playerTileHeight);i++)
-		{
+		for(int i = (int)playerYCoord;i<= (int)(playerYCoord+playerTileHeight);i++){
+
 			Cell westCell = collisionLayer.getCell((int)westX, (int)i);
 
-			if(westCell !=null && westCell.getTile()!=null)
-			{
-				//System.out.println("x:"+i*collisionLayer.getTileWidth()+"   Y:"+southY*collisionLayer.getTileHeight()+" Width:"+collisionLayer.getTileWidth()+ " Height:"+collisionLayer.getTileHeight() );
+			if(westCell !=null && westCell.getTile()!=null){
+
 				float rectX = (int)westX*collisionLayer.getTileWidth();
 				float rectY = i*collisionLayer.getTileHeight();
-				
+
 				Rectangle cellRect = new Rectangle(rectX,rectY,rectWidth+this.speed,rectHeight);
 
-				if(this.overlaps(cellRect))
-				{
+				if(this.overlaps(cellRect)){
 					return true;
 				}
 			}
@@ -213,22 +200,21 @@ public class Player extends Entity implements Collidable{
 	}
 
 	public boolean collidesTop(TiledMapTileLayer collisionLayer,float playerXCoord, float playerYCoord, float rectWidth,float rectHeight,float playerTileWidth,float playerTileHeight) {
-		
+
 		float northY = playerYCoord+playerTileHeight+1;
 
-		for(int i = (int)playerXCoord;i<= (int)(playerXCoord+playerTileWidth);i++)
-		{
+		for(int i = (int)playerXCoord;i<= (int)(playerXCoord+playerTileWidth);i++){
+
 			Cell northCell = collisionLayer.getCell((int)i, (int)northY);
 
-			if(northCell !=null && northCell.getTile()!=null)
-			{
+			if(northCell !=null && northCell.getTile()!=null){
+
 				float rectX = i*collisionLayer.getTileWidth();
 				float rectY = (int)northY*collisionLayer.getTileHeight();
-				
+
 				Rectangle cellRect = new Rectangle(rectX,rectY-this.getSpeed(),rectWidth,rectHeight);
 
-				if(this.overlaps(cellRect))
-				{
+				if(this.overlaps(cellRect)){
 					return true;
 				}
 			}
@@ -240,7 +226,7 @@ public class Player extends Entity implements Collidable{
 
 
 
-	
+
 
 	public float getSpeed() {
 		return speed;
@@ -252,12 +238,12 @@ public class Player extends Entity implements Collidable{
 
 	@Override
 	public boolean overlaps (Rectangle r) {
-		return hitbox.getX()+this.getX() <= r.x + r.width 
-				&& hitbox.getX() + hitbox.getWidth()+this.getX() >= r.x 
-				&& hitbox.getY()+this.getY() <= r.y + r.height 
-				&& hitbox.getY() + hitbox.getHeight()+this.getY() >= r.y;
+		return hitbox.getX()	 +this.getX() 					  <= r.x + r.width 
+				&& hitbox.getX() +this.getX() + hitbox.getWidth() >= r.x 
+				&& hitbox.getY() +this.getY() 					  <= r.y + r.height 
+				&& hitbox.getY() +this.getY() + hitbox.getHeight()>= r.y;
 	}
-	
+
 	public HitBox getHitbox()
 	{
 		return new HitBox(hitbox.x+this.getX(),hitbox.y+this.getY(),hitbox.width,hitbox.height);
@@ -269,7 +255,7 @@ public class Player extends Entity implements Collidable{
 	@Override
 	public void handleMovement() {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
 
