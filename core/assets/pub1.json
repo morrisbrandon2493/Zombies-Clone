@@ -1,0 +1,30 @@
+{"frames": {
+
+"inside_a2_by_candacis.png":
+{
+	"frame": {"x":1,"y":515,"w":512,"h":384},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":512,"h":384},
+	"sourceSize": {"w":512,"h":384},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"inside_pub_by_candacis.png":
+{
+	"frame": {"x":1,"y":1,"w":512,"h":512},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":512,"h":512},
+	"sourceSize": {"w":512,"h":512},
+	"pivot": {"x":0.5,"y":0.5}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "pub1.png",
+	"format": "RGBA8888",
+	"size": {"w":514,"h":900},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:d822f2f9ff9d8e2085923fb45ae2fdf0:0774a5627e61659fc90d028ba4084c43:0c260f2cc3ea7bdc2296847bbe303444$"
+}
+}
