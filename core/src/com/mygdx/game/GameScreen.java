@@ -3,7 +3,6 @@ package com.mygdx.game;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.w3c.dom.css.Rect;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -15,17 +14,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader.Parameters;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.mygdx.game.Entities.Entity;
 import com.mygdx.game.Entities.Player;
-import com.mygdx.game.Interfaces.Entity;
-import com.mygdx.game.Interfaces.HitBox;
+
 
 public class GameScreen  implements Screen, InputProcessor
 {
@@ -50,7 +45,7 @@ public class GameScreen  implements Screen, InputProcessor
 		this.doGameTick();
 		player.update();
 
-		HitBox tmpRect = player.getHitbox();
+		//HitBox tmpRect = player.getHitbox();
 
 		camera.position.set(player.getX() + player.getWidth() / 2, player.getY() + player.getHeight() / 2, 0);
 		camera.update();
@@ -59,95 +54,33 @@ public class GameScreen  implements Screen, InputProcessor
 		shapeRenderer.setProjectionMatrix(camera.combined);
 
 
-		renderer.render(new int[] {0});
-		float playerXCoord = (player.getX()/collisionObjectLayer.getTileWidth());
-		float playerYCoord = (player.getY()/collisionObjectLayer.getTileHeight());
-		float playerTileWidth = player.getHitbox().getWidth()/collisionObjectLayer.getTileWidth();
-		float playerTileHeight =  player.getHitbox().getHeight()/collisionObjectLayer.getTileHeight();
-		float southY = playerYCoord-1;
-		float northY = playerYCoord+playerTileHeight+1;
+		renderer.render(new int[] {0});		
 		
-		hud.begin();
-		font.draw(hud,playerXCoord+"  "+playerTileWidth,10,100);
-		font.draw(hud, "Coords:"+(int)Math.ceil(player.getX()/collisionObjectLayer.getTileWidth())+":"+(int)Math.ceil(player.getY()/collisionObjectLayer.getTileHeight()), 10, 80);
-		font.draw(hud, "Tile Size:"+collisionObjectLayer.getTileWidth()+":"+collisionObjectLayer.getTileHeight(), 10, 60);
-		font.draw(hud, "X-Position:"+(int)player.getX()+" Width:"+player.getHitbox().width , 10, 40);
-		font.draw(hud, "Y-Position:"+(int)player.getY()+" Height:"+player.getHitbox().height, 10, 20);
-		hud.end();
 		
+		/*
 		shapeRenderer.begin(ShapeType.Filled);
 		shapeRenderer.rect(tmpRect.x,tmpRect.y,tmpRect.width,tmpRect.height);
-		
-		for(int i = (int)playerXCoord;i<= (int)(playerXCoord+playerTileWidth);i++)
-		{
-			Cell southCell = collisionObjectLayer.getCell((int)i, (int) southY);
-			
-
-			if(southCell !=null && southCell.getTile()!=null)
-			{
-				float rectX = i*collisionObjectLayer.getTileWidth();
-				float rectY = (int)southY*collisionObjectLayer.getTileHeight();
-				float rectWidth = collisionObjectLayer.getTileWidth();
-				float rectHeight = collisionObjectLayer.getTileHeight();
-
-				shapeRenderer.rect(rectX,rectY,rectWidth,rectHeight);
-					
-			}
-			Cell northCell = collisionObjectLayer.getCell((int)i, (int) northY);
-			
-			if(northCell !=null && northCell.getTile()!=null)
-			{
-				float rectX = i*collisionObjectLayer.getTileWidth();
-				float rectY = (int)northY*collisionObjectLayer.getTileHeight();
-				float rectWidth = collisionObjectLayer.getTileWidth();
-				float rectHeight = collisionObjectLayer.getTileHeight();
-				
-				shapeRenderer.rect(rectX,rectY,rectWidth,rectHeight);
-			}
-		}
-		float WestX = playerXCoord-1;
-		float EastX = playerXCoord+playerTileWidth+1;
-
-		for(int i = (int)playerYCoord;i<= (int)(playerYCoord+playerTileHeight);i++)
-		{
-		Cell westCell = collisionObjectLayer.getCell((int)WestX, (int)i);
-
-			if(westCell !=null && westCell.getTile()!=null)
-			{
-				float rectX = (int)WestX*collisionObjectLayer.getTileWidth();
-				float rectY = i*collisionObjectLayer.getTileHeight();
-				float rectWidth = collisionObjectLayer.getTileWidth();
-				float rectHeight = collisionObjectLayer.getTileHeight();
-				shapeRenderer.rect(rectX,rectY,rectWidth,rectHeight);
-			}
-			
-				Cell eastCell = collisionObjectLayer.getCell((int)EastX, (int)i);
-
-				if(eastCell !=null && eastCell.getTile()!=null)
-				{
-					float rectX = (int)EastX*collisionObjectLayer.getTileWidth();
-					float rectY = i*collisionObjectLayer.getTileHeight();
-					float rectWidth = collisionObjectLayer.getTileWidth();
-					float rectHeight = collisionObjectLayer.getTileHeight();
-				shapeRenderer.rect(rectX,rectY,rectWidth,rectHeight);
-				}
-		}
-
 		shapeRenderer.end();
+		*/
 
-
-
+		
 		renderer.getBatch().begin();
 		player.draw(renderer.getBatch());
+		
 		renderer.getBatch().end();
-
-
-
 		renderer.render(new int[] {1});
-		renderer.render(new int[] {3});
 
 
+		
+		//renderer.render(new int[] {3});
 
+
+		hud.begin();
+		font.draw(hud, "FPS:"+Gdx.graphics.getFramesPerSecond(),10,100);
+		font.draw(hud, "Coords:"+(int)Math.ceil(player.getX()/collisionObjectLayer.getTileWidth())+":"+(int)Math.ceil(player.getY()/collisionObjectLayer.getTileHeight()), 10, 20);
+		font.draw(hud, "Tile Size:"+collisionObjectLayer.getTileWidth()+":"+collisionObjectLayer.getTileHeight(), 10, 60);
+		font.draw(hud, "X:"+(int)player.getX()+" Y:"+(int)player.getY() , 10, 40);
+		hud.end();
 		
 	}
 	public void doGameTick() 

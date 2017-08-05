@@ -9,10 +9,10 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.Rectangle;
-import com.mygdx.game.Interfaces.CardinalDirection;
 import com.mygdx.game.Interfaces.Collidable;
-import com.mygdx.game.Interfaces.Entity;
 import com.mygdx.game.Interfaces.HitBox;
+
+import Enums.CardinalDirection;
 
 
 
@@ -21,27 +21,17 @@ public class Player extends Entity implements Collidable{
 	private HitBox hitbox;
 	private final Set<Integer> pressed = new TreeSet<Integer>();
 	private final Set<CardinalDirection> blockedDirections = new TreeSet<CardinalDirection>();
-	private float speed = 4f;
+	private float speed = 3f;
 	public Rectangle cellRect;
 
 	public Player(String id,String character) {
 		super(new Texture(character+".png"),id);
-		hitbox = new HitBox(getWidth()/4,0,getWidth()*.5f,25);
+		hitbox = new HitBox(getWidth()*.25f,0,getWidth()*.5f,15);
 	}
 
 	@Override
 	public void draw(Batch batch) {
 		super.draw(batch);
-	}
-	/*public HitBox getAttachedHitbox() {
-		return hitbox;
-	}*/
-	public HitBox getHitbox()
-	{
-		return new HitBox(hitbox.x+this.getX(),hitbox.y+this.getY(),hitbox.width,hitbox.height);
-	}
-	public void setHitbox(HitBox hitbox) {
-		this.hitbox = hitbox;
 	}
 
 	@Override
@@ -99,7 +89,16 @@ public class Player extends Entity implements Collidable{
 	@Override
 	public void checkMapCollisions(TiledMapTileLayer collisionLayer) 
 	{
-		if(collidesRight(collisionLayer))
+		float playerXCoord = (this.getHitbox().x/collisionLayer.getTileWidth());
+		float playerYCoord = (this.getHitbox().y/collisionLayer.getTileHeight());
+		
+		float playerTileWidth =  hitbox.getWidth()/collisionLayer.getTileWidth();
+		float playerTileHeight =  hitbox.getHeight()/collisionLayer.getTileHeight();
+		
+		float rectWidth = collisionLayer.getTileWidth();
+		float rectHeight = collisionLayer.getTileHeight();
+		
+		if(collidesRight(collisionLayer, playerXCoord, playerYCoord, rectWidth, rectHeight, playerTileWidth, playerTileHeight))
 		{
 			blockedDirections.add(CardinalDirection.EAST);
 		}
@@ -108,7 +107,7 @@ public class Player extends Entity implements Collidable{
 			blockedDirections.remove(CardinalDirection.EAST);
 		}
 
-		if(collidesLeft(collisionLayer))
+		if(collidesLeft(collisionLayer, playerXCoord, playerYCoord, rectWidth, rectHeight, playerTileWidth, playerTileHeight))
 		{
 			blockedDirections.add(CardinalDirection.WEST);
 		}
@@ -117,7 +116,7 @@ public class Player extends Entity implements Collidable{
 			blockedDirections.remove(CardinalDirection.WEST);
 		}
 
-		if(collidesTop(collisionLayer))
+		if(collidesTop(collisionLayer, playerXCoord, playerYCoord, rectWidth, rectHeight, playerTileWidth, playerTileHeight))
 		{
 			blockedDirections.add(CardinalDirection.NORTH);
 		}
@@ -126,7 +125,7 @@ public class Player extends Entity implements Collidable{
 			blockedDirections.remove(CardinalDirection.NORTH);
 		}
 
-		if(collidesBottom(collisionLayer))
+		if(collidesBottom(collisionLayer, playerXCoord, playerYCoord, rectWidth, rectHeight, playerTileWidth, playerTileHeight))
 		{
 			blockedDirections.add(CardinalDirection.SOUTH);
 		}
@@ -135,11 +134,10 @@ public class Player extends Entity implements Collidable{
 			blockedDirections.remove(CardinalDirection.SOUTH);
 		}
 	}
-	public boolean collidesBottom(TiledMapTileLayer collisionLayer) {
+	
+	
+	public boolean collidesBottom(TiledMapTileLayer collisionLayer,float playerXCoord, float playerYCoord, float rectWidth,float rectHeight,float playerTileWidth,float playerTileHeight) {
 
-		float playerXCoord = (hitbox.getX()/collisionLayer.getTileWidth());
-		float playerYCoord = (hitbox.getY()/collisionLayer.getTileHeight());
-		float playerTileWidth = hitbox.getWidth()/collisionLayer.getTileWidth();
 		float southY = playerYCoord-1;
 
 		for(int i = (int)playerXCoord;i<= (int)(playerXCoord+playerTileWidth);i++)
@@ -152,9 +150,7 @@ public class Player extends Entity implements Collidable{
 			{
 				float rectX = i*collisionLayer.getTileWidth();
 				float rectY = (int)southY*collisionLayer.getTileHeight();
-				float rectWidth = collisionLayer.getTileWidth();
-				float rectHeight = collisionLayer.getTileHeight();
-
+			
 				Rectangle cellRect = new Rectangle(rectX,rectY,rectWidth,rectHeight+this.speed);
 
 				if(this.overlaps(cellRect))
@@ -166,23 +162,19 @@ public class Player extends Entity implements Collidable{
 		}	
 		return false;
 	}
-	public boolean collidesRight(TiledMapTileLayer collisionLayer) {
-
-		float playerXCoord = (this.getX()/collisionLayer.getTileWidth());
-		float playerYCoord = (this.getY()/collisionLayer.getTileHeight());
-		float playerTileWidth =  this.getHitbox().getWidth()/collisionLayer.getTileWidth();
-		float playerTileHeight =  this.getHitbox().getHeight()/collisionLayer.getTileHeight();
-		float EastX = (int)(playerXCoord+playerTileWidth+1);
+	public boolean collidesRight(TiledMapTileLayer collisionLayer,float playerXCoord, float playerYCoord, float rectWidth,float rectHeight,float playerTileWidth,float playerTileHeight) 
+	{		
+		float eastX = (playerXCoord+playerTileWidth+1);
+		
 		for(int i = (int)playerYCoord;i<= (int)(playerYCoord+playerTileHeight);i++)
 		{
-			Cell eastCell = collisionLayer.getCell((int)EastX, (int)i);
+			Cell eastCell = collisionLayer.getCell((int)eastX, (int)i);
 
 			if(eastCell !=null && eastCell.getTile()!=null)
 			{
-				float rectX = (int)EastX*collisionLayer.getTileWidth();
+				float rectX = (int)eastX*collisionLayer.getTileWidth();
 				float rectY = i*collisionLayer.getTileHeight();
-				float rectWidth = collisionLayer.getTileWidth();
-				float rectHeight = collisionLayer.getTileHeight();
+				
 
 				Rectangle cellRect = new Rectangle(rectX-this.speed,rectY,rectWidth,rectHeight);
 
@@ -195,24 +187,20 @@ public class Player extends Entity implements Collidable{
 		return false;
 	}
 
-	public boolean collidesLeft(TiledMapTileLayer collisionLayer) {
-		float playerXCoord = (this.getX()/collisionLayer.getTileWidth());
-		float playerYCoord = (this.getY()/collisionLayer.getTileHeight());
-		float playerTileHeight =  this.getHitbox().getHeight()/collisionLayer.getTileHeight();;
+	public boolean collidesLeft(TiledMapTileLayer collisionLayer,float playerXCoord, float playerYCoord, float rectWidth,float rectHeight,float playerTileWidth,float playerTileHeight) {
 
-		float WestX = playerXCoord-1;
+		float westX = playerXCoord-1;
 
 		for(int i = (int)playerYCoord;i<= (int)(playerYCoord+playerTileHeight);i++)
 		{
-			Cell westCell = collisionLayer.getCell((int)WestX, (int)i);
+			Cell westCell = collisionLayer.getCell((int)westX, (int)i);
 
 			if(westCell !=null && westCell.getTile()!=null)
 			{
 				//System.out.println("x:"+i*collisionLayer.getTileWidth()+"   Y:"+southY*collisionLayer.getTileHeight()+" Width:"+collisionLayer.getTileWidth()+ " Height:"+collisionLayer.getTileHeight() );
-				float rectX = (int)WestX*collisionLayer.getTileWidth();
+				float rectX = (int)westX*collisionLayer.getTileWidth();
 				float rectY = i*collisionLayer.getTileHeight();
-				float rectWidth = collisionLayer.getTileWidth();
-				float rectHeight = collisionLayer.getTileHeight();
+				
 				Rectangle cellRect = new Rectangle(rectX,rectY,rectWidth+this.speed,rectHeight);
 
 				if(this.overlaps(cellRect))
@@ -224,11 +212,8 @@ public class Player extends Entity implements Collidable{
 		return false;
 	}
 
-	public boolean collidesTop(TiledMapTileLayer collisionLayer) {
-		float playerXCoord = (this.getX()/collisionLayer.getTileWidth());
-		float playerYCoord = (this.getY()/collisionLayer.getTileHeight());
-		float playerTileWidth =  this.getHitbox().getWidth()/collisionLayer.getTileWidth();
-		float playerTileHeight =  this.getHitbox().getHeight()/collisionLayer.getTileHeight();
+	public boolean collidesTop(TiledMapTileLayer collisionLayer,float playerXCoord, float playerYCoord, float rectWidth,float rectHeight,float playerTileWidth,float playerTileHeight) {
+		
 		float northY = playerYCoord+playerTileHeight+1;
 
 		for(int i = (int)playerXCoord;i<= (int)(playerXCoord+playerTileWidth);i++)
@@ -237,14 +222,9 @@ public class Player extends Entity implements Collidable{
 
 			if(northCell !=null && northCell.getTile()!=null)
 			{
-				//System.out.println("x:"+i*collisionLayer.getTileWidth()+"   Y:"+southY*collisionLayer.getTileHeight()+" Width:"+collisionLayer.getTileWidth()+ " Height:"+collisionLayer.getTileHeight() );
 				float rectX = i*collisionLayer.getTileWidth();
 				float rectY = (int)northY*collisionLayer.getTileHeight();
-				float rectWidth = collisionLayer.getTileWidth();
-				float rectHeight = collisionLayer.getTileHeight();
-
-				//System.out.println("-x:"+rectX+"   Y:"+rectY+" Width:"+rectWidth+ " Height:"+rectHeight );
-				//System.out.println("_x:"+hitbox.x+"   Y:"+hitbox.y+" Width:"+hitbox.width+ " Height:"+hitbox.height );
+				
 				Rectangle cellRect = new Rectangle(rectX,rectY-this.getSpeed(),rectWidth,rectHeight);
 
 				if(this.overlaps(cellRect))
@@ -260,11 +240,7 @@ public class Player extends Entity implements Collidable{
 
 
 
-	@Override
-	public void handleMovement() {
-
-
-	}
+	
 
 	public float getSpeed() {
 		return speed;
@@ -280,6 +256,20 @@ public class Player extends Entity implements Collidable{
 				&& hitbox.getX() + hitbox.getWidth()+this.getX() >= r.x 
 				&& hitbox.getY()+this.getY() <= r.y + r.height 
 				&& hitbox.getY() + hitbox.getHeight()+this.getY() >= r.y;
+	}
+	
+	public HitBox getHitbox()
+	{
+		return new HitBox(hitbox.x+this.getX(),hitbox.y+this.getY(),hitbox.width,hitbox.height);
+	}
+	public void setHitbox(HitBox hitbox) {
+		this.hitbox = hitbox;
+	}
+
+	@Override
+	public void handleMovement() {
+		// TODO Auto-generated method stub
+		
 	}
 }
 

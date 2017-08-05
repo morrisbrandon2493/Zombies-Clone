@@ -1,8 +1,10 @@
-package com.mygdx.game.Interfaces;
+package com.mygdx.game.Entities;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
+
+import Enums.CardinalDirection;
 
 public abstract class Entity {
 	private float x, y;
